@@ -83,14 +83,6 @@ class Motor3Ph:
         Tres = carga.get_torque(self.__w_rotor)
         a = (Cm - Tres - Tr_mot) / (self.__Mr + carga.I)
         self.__w_rotor += a * (t - to)
-
-        """
-        w_max = 0.98 * self.__w_s
-        if w < w_max:
-            self.__w_rotor = w
-        else:
-            self.__w_rotor = w_max
-        """
         
         values['fp'] = math.cos(a)
         values['pot-mec'] = (Cm * self.__w_rotor) - self.__perdas
@@ -142,7 +134,7 @@ class Motor3PhY(Motor3Ph):
         return fcurrent
 
 
-#------------------------------------------------------------------------------------------------------
+#----------------------------------------
 if __name__ == "__main__":
     import sys
     
