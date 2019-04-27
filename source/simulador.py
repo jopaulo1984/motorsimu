@@ -1,7 +1,23 @@
+#!/usr/bin/python3
+#coding: utf8
+
+"""
++----------------------------------------+
+| MotorSimu v1.0                         |
+| Autor: João Paulo F da Silva           |
+| website: jpcompweb.com.br              |
++----------------------------------------+
+
+MotorSimu
+=========
+
+O MotorSimu é um simulador de curvas de partida e regime de motores de indução.
+
+"""
 
 import tkinter as tk
 import graficos as gr
-import motor_inducao as mi
+import motorinducao as mi
 import carga as cg
 import ast
 import math
@@ -12,18 +28,12 @@ class SimuApp(tk.Tk):
         
         self.__scalex = 1.0
         self.__scaley = 1.0
-        self.__dx = 0
-        self.__dy = 0
-        
-        #self.motor = mi.Motor3PhY()
-        #self.carga = cg.CargaRotativa()
         
         panesq      = tk.Frame(self, padx=5, pady=5)
         mainpan     = tk.Frame(self)
         panmot      = tk.Frame(panesq, bd=1)
         pancarg     = tk.Frame(panesq, bd=1)
-        pansimu     = tk.Frame(panesq, bd=1)
-        #pansimuvisu = tk.Frame(pansimu, bd=1)
+        pansimu     = tk.Frame(panesq, bd=1)        
         panbuttons  = tk.Frame(panesq, bd=1, pady=10)
         
         self.grafic = gr.GraficoLinha(mainpan)
@@ -47,121 +57,129 @@ class SimuApp(tk.Tk):
         
         #== motor ==
         self.m_r1 = tk.Entry(panmot)
-        self.m_x1 = tk.Entry(panmot)
-        self.m_xo = tk.Entry(panmot)
-        self.m_r2 = tk.Entry(panmot)
-        self.m_x2 = tk.Entry(panmot)        
-        self.v_n  = tk.Entry(panmot)
-        self.freq = tk.Entry(panmot)
-        self.pols = tk.Entry(panmot)
         self.m_r1.insert(0,'0.294')
-        self.m_x1.insert(0,'0.503')
-        self.m_xo.insert(0,'13.25')
-        self.m_r2.insert(0,'0.144')
-        self.m_x2.insert(0,'0.209')        
-        self.v_n .insert(0,'220')
-        self.freq.insert(0,'60')
-        self.pols.insert(0,'6')
         self.m_r1.bind('<KeyRelease>',valida_num)
+        
+        self.m_x1 = tk.Entry(panmot)
+        self.m_x1.insert(0,'0.503')
         self.m_x1.bind('<KeyRelease>',valida_num)
+        
+        self.m_xo = tk.Entry(panmot)
+        self.m_xo.insert(0,'13.25')
         self.m_xo.bind('<KeyRelease>',valida_num)
+        
+        self.m_r2 = tk.Entry(panmot)
+        self.m_r2.insert(0,'0.144')
         self.m_r2.bind('<KeyRelease>',valida_num)
-        self.m_x2.bind('<KeyRelease>',valida_num)      
+        
+        self.m_x2 = tk.Entry(panmot)
+        self.m_x2.insert(0,'0.209')
+        self.m_x2.bind('<KeyRelease>',valida_num)
+        
+        self.v_n  = tk.Entry(panmot)
+        self.v_n .insert(0,'220')
         self.v_n .bind('<KeyRelease>',valida_num)
+        
+        self.freq = tk.Entry(panmot)
+        self.freq.insert(0,'60')
         self.freq.bind('<KeyRelease>',valida_num)
+        
+        self.pols = tk.Entry(panmot)
+        self.pols.insert(0,'6')
         self.pols.bind('<KeyRelease>',valida_num)
         
         #== carga ===
         self.c_I    = tk.Entry(pancarg)
-        self.c_func = tk.Entry(pancarg)
         self.c_I.bind('<Return>', self.__simular)
-        self.c_I.insert(0,'0.4')
         self.c_I.bind('<KeyRelease>',valida_num)
+        self.c_I.insert(0,'0.4')
+        
+        self.c_func = tk.Entry(pancarg)
         self.c_func.bind('<Return>', self.__simular)
         self.c_func.insert(0,'(50/125) * w')
         
         #== simulação ==
-        #self.tf = tk.Entry(pansimu)
         self.dt = tk.Entry(pansimu,width=6)
-        #self.tf.bind('<Return>', self.__simular)
         self.dt.bind('<Return>', self.__simular)
         self.dt.bind('<KeyRelease>',valida_num)
-        #self.tf.insert(0,'1')
-        self.dt.insert(0,'0.04')             
-        #self.chktorque = tk.Checkbutton(pansimu,text='Torque motor')
+        self.dt.insert(0,'0.04')
+        
         self.divtorque = tk.Entry(pansimu,width=6)
         self.divtorque.bind('<Return>', self.__simular)
-        self.divtorque.bind('<KeyRelease>',valida_num)
-        #self.chktorque.toggle()
+        self.divtorque.bind('<KeyRelease>',valida_num)        
         self.divtorque.insert(0,'12')
-        #self.chkpot = tk.Checkbutton(pansimu,text='Potência')
+        
         self.divpot = tk.Entry(pansimu,width=6)
         self.divpot.bind('<Return>', self.__simular)
-        self.divpot.bind('<KeyRelease>',valida_num)
-        #self.chkpot.toggle()
+        self.divpot.bind('<KeyRelease>',valida_num)        
         self.divpot.insert(0,'0')
-        #self.chkcorr = tk.Checkbutton(pansimu,text='Corrente')
+        
         self.divcorr = tk.Entry(pansimu,width=6)
         self.divcorr.bind('<Return>', self.__simular)
         self.divcorr.bind('<KeyRelease>',valida_num)
-        #self.chkcorr.toggle()
         self.divcorr.insert(0,'0')
-        #self.chkrpm = tk.Checkbutton(pansimu,text='Rotação')
+        
         self.divrpm = tk.Entry(pansimu,width=6)
         self.divrpm.bind('<Return>', self.__simular)
         self.divrpm.bind('<KeyRelease>',valida_num)
-        #self.chkrpm.toggle()
         self.divrpm.insert(0,'100')
-        #self.chkcr = tk.Checkbutton(pansimu,text='Torque carga')
+        
         self.divcr = tk.Entry(pansimu,width=6)
         self.divcr.bind('<Return>', self.__simular)
         self.divcr.bind('<KeyRelease>',valida_num)
-        #self.chkcr.toggle()
         self.divcr.insert(0,'12')
         
         panesq.grid(row=0,column=0, sticky=tk.N)
         mainpan.grid(row=0,column=1, sticky=tk.N)
         
         self.grafic.pack(fill=tk.BOTH)
+        
         tk.Label(panesq,text='------ Motor ------').pack()
         panmot.pack(anchor=tk.W)
+        
         tk.Label(panesq,text='\n------ Carga ------').pack()
         pancarg.pack(anchor=tk.W)
+        
         tk.Label(panesq,text='\n---- Simulação ----').pack()
         pansimu.pack(anchor=tk.W)
+        
         panbuttons.pack()
+        
         tk.Button(panesq,text='Simular',command=self.__simular).pack()
         
-        """
-        tk.Label(panesq,text='\n---- Comandos ----').pack()
-        """
-        
+        #== panmot ==
         tk.Label(panmot,text='r1').grid(row=0,column=0)
         self.m_r1.grid(row=0,column=1)
+        
         tk.Label(panmot,text='x1').grid(row=1,column=0)
         self.m_x1.grid(row=1,column=1)
+        
         tk.Label(panmot,text='xo').grid(row=2,column=0)
         self.m_xo.grid(row=2,column=1)
+        
         tk.Label(panmot,text='r2').grid(row=3,column=0)
         self.m_r2.grid(row=3,column=1)
+        
         tk.Label(panmot,text='x2').grid(row=4,column=0)
         self.m_x2.grid(row=4,column=1)
+        
         tk.Label(panmot,text='V').grid(row=5,column=0)
         self.v_n.grid(row=5,column=1)
+        
         tk.Label(panmot,text='f').grid(row=6,column=0)
         self.freq.grid(row=6,column=1)
+        
         tk.Label(panmot,text='P').grid(row=7,column=0)
         self.pols.grid(row=7,column=1)
         
+        #== pancarg ==
         tk.Label(pancarg,text='M').grid(row=0,column=0)
         self.c_I.grid(row=0,column=1)
+        
         tk.Label(pancarg,text='Cr(w)').grid(row=1,column=0)
-        self.c_func.grid(row=1,column=1)        
+        self.c_func.grid(row=1,column=1)
         
-        #tk.Label(pansimu,text='tf').grid(row=0,column=0,sticky=tk.W)
-        #self.tf.grid(row=0,column=1,sticky=tk.W)
-        #pansimuvisu.grid(row=2,column=0,columnspan=2)
-        
+        #== panbuttons ==
         tk.Button(panbuttons,text='Y+',command=self.y_up).grid(row=0,column=0)
         tk.Button(panbuttons,text='Y0',command=self.y_reset).grid(row=1,column=0)
         tk.Button(panbuttons,text='Y-',command=self.y_down).grid(row=2,column=0)
@@ -172,28 +190,27 @@ class SimuApp(tk.Tk):
         tk.Button(panbuttons,text='X0',command=self.x_reset).grid(row=1,column=4)
         tk.Button(panbuttons,text='X+',command=self.x_up).grid(row=1,column=5)
         
-        
+        #== pansimu ==
         tk.Label(pansimu,text='Tempo(s)').grid(row=0,column=0,sticky=tk.W)
         self.dt.grid(row=0,column=1,sticky=tk.W)
         tk.Label(pansimu,text='/div').grid(row=0,column=2)
-        #tk.Label(pansimu,text='--- Visualizar ---', pady=5).grid(row=0,column=0,columnspan=3)
-        #self.chktorque.grid(row=1,column=0, sticky=tk.W)
+        
         tk.Label(pansimu,text='Conjugado motor').grid(row=3,column=0, sticky=tk.W)
         self.divtorque.grid(row=3,column=1)
         tk.Label(pansimu,text='/div').grid(row=3,column=2)
-        #self.chkpot.grid(row=2,column=0, sticky=tk.W)
+        
         tk.Label(pansimu,text='Potência(HP)').grid(row=4,column=0, sticky=tk.W)
         self.divpot.grid(row=4,column=1)
         tk.Label(pansimu,text='/div').grid(row=4,column=2)
-        #self.chkcorr.grid(row=3,column=0, sticky=tk.W)
+        
         tk.Label(pansimu,text='Corrente').grid(row=5,column=0, sticky=tk.W)
         self.divcorr.grid(row=5,column=1)
         tk.Label(pansimu,text='/div').grid(row=5,column=2)
-        #self.chkrpm.grid(row=4,column=0, sticky=tk.W)
+        
         tk.Label(pansimu,text='Rotação').grid(row=6,column=0, sticky=tk.W)
         self.divrpm.grid(row=6,column=1)
         tk.Label(pansimu,text='/div').grid(row=6,column=2)
-        #self.chkcr.grid(row=5,column=0, sticky=tk.W)
+        
         tk.Label(pansimu,text='Conjugado resistente').grid(row=7,column=0, sticky=tk.W)
         self.divcr.grid(row=7,column=1)
         tk.Label(pansimu,text='/div').grid(row=7,column=2)
@@ -254,9 +271,10 @@ class SimuApp(tk.Tk):
         
         motor = mi.Motor3PhY()
         motor.set_parametros(*pars)
-        #fcr = '(lambda w: %s)' % self.c_func.get()
+        
         carga = cg.CargaRotativa()
         carga.I = f(self.c_I)
+        
         try:
             carga.f_torque = eval('lambda w: %s' %  self.c_func.get().lower().replace('^','**').replace('sqrt','math.sqrt'))
         except:
@@ -295,5 +313,4 @@ if __name__ == "__main__":
         win = SimuApp()
     except Exception as ex:
         print(ex)
-        input('<Enter>')
     exit(0)
