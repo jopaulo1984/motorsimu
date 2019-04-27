@@ -42,9 +42,10 @@ class GraficoLinha(tk.Canvas):
             for serie in self.series:
                 if len(serie) > m: m = len(serie)
             return m
+        
         N = len_max()
         if N == 0: return
-        #dist = self.x_max - self.x_init
+        
         w = int(self.cget('width'))
         h = int(self.cget('height'))
         dx = (w - 220) / N if N > 0 else 0
@@ -55,6 +56,7 @@ class GraficoLinha(tk.Canvas):
         gw = w - 201
         gh = h - 21
         f = lambda value, y_max: -(380 / y_max) * value + 400
+        
         for i in range(0, N):
             if i > 0:
                 for j, serie in enumerate(self.series):
@@ -76,14 +78,15 @@ class GraficoLinha(tk.Canvas):
         x1 = x0+5
         x2 = x1+20
         x3 = x2+5
-        #self.create_rectangle(x0, 25, x0+155, len(labels) * 20 + 25, fill=self.backcolor, tags='series')
         y0 = 0
+        
         for label, i in labels:
             if self.y_max[i] == 0: continue
             y = y0 * 20 + 35
             y0+=1
             self.create_line(x1, y, x2, y, fill=self.colors[i], width=4, tags='series')
             self.create_text(x3, y - 10, text="%s (Y:%0.1f/div)" % (label, self.y_max[i]/19), tags='series', anchor=tk.NW, fill='white')
+        
         self.create_text(w-200,h-5, text='%0.2f%s' % (self.x_div * 25, self.x_label), anchor=tk.SW, tags='series', fill='white')
         
 def get_graphico(series, x_max, x_div, x_label, colors, y_max, labels):
@@ -101,7 +104,4 @@ def get_graphico(series, x_max, x_div, x_label, colors, y_max, labels):
     gr.draw()
     win.mainloop()
     return gr
-    
-if __name__ == "__main__":
-    gr = get_graphico([i for i in range(100)],1,0.01,'s',['#0000FF'],[100],['teste'])
         
