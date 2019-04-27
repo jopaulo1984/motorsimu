@@ -1,44 +1,15 @@
+"""
+misc
+====
 
-#
+Autor: João Paulo F da Silva
+Versão: v1.0
+
+Módulo que contém classes e funções muito usadas.
+
+"""
+
 import math
-
-def order_points(x1, y1, x2, y2):
-    if x2 < x1:
-        x = x2
-        x2 = x1
-        x1 = x
-
-    if y2 < y1:
-        y = y2
-        y2 = y1
-        y1 = y
-
-    return x1, y1, x2, y2
-
-
-def get_rect(x1, y1, x2, y2, d=0):
-    if x2 < x1:
-        x = x2
-        x2 = x1
-        x1 = x
-
-    if y2 < y1:
-        y = y2
-        y2 = y1
-        y1 = y
-
-    return x1 - d, y1 - d, x2 + d, y2 + d
-
-
-def na_regiao(x, y, l, t, r, b):
-    return l <= x and x <= r and t <= y and y <= b
-
-
-def distance(v1, v2):
-    if v2 < v1:
-        return v1 - v2
-    return v2 - v1
-#
 
 class Vector2d:
     
