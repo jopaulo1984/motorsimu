@@ -25,6 +25,7 @@ class GraficoLinha(tk.Canvas):
 
     Antes de desenhar, deve-se definir os atributos da classe:
     - series:  lista contendo várias outras listas de valores do eixo y do gráfico.
+    - x_init:  valor inicial do eixo x.
     - x_div:   valor de cada divisão de x.
     - x_label: rótulo do eixo x.
     - y_div:   lista contendo o valor de cada divisão relativa ao índice da série de valores
@@ -39,6 +40,7 @@ class GraficoLinha(tk.Canvas):
     def __init__(self, *args, **keyargs):
         super().__init__(*args, **keyargs)
         self.series = []
+        self.x_init = 0
         self.x_div = 0.1
         self.x_label = 's'
         self.y_div = []
@@ -100,11 +102,12 @@ class GraficoLinha(tk.Canvas):
         gw = gright - gleft
         gh = gbottom - gtop
         
+        g = lambda d: d + x_0
         dx = gw / N if N > 0 else 0
-        x = 0
-        xant = 0
+        x = self.x_init / self.x_div * 20
+        xant = x
         f = lambda value, y_div: y_0 - (20/y_div) * value
-        g = lambda x: x + x_0
+        
 
         def get_limited_points(p1,p2):
             def _f(i1,i2,l1,l2):
