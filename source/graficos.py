@@ -94,17 +94,17 @@ class LineGraphic(tk.Canvas):
         x = gleft + 10
         for i in range(1, f(gw)):
             if x % 20 == 0:
-                self.create_line(x, 21, x, h-21, fill=self.__dcolor, tags='base')
+                self.create_line(x, gtop+1, x, gbottom-1, fill=self.__dcolor, tags='base')
             else:
-                self.create_line(x, 21, x, h-21, fill=self.__sdcolor, tags='base')
+                self.create_line(x, gtop+1, x, gbottom-1, fill=self.__sdcolor, tags='base')
             x += 10
         
         y = gtop + 10
         for i in range(1, f(gh)):
             if y % 20 == 0:
-                self.create_line(21, y, w-201, y, fill=self.__dcolor, tags='base')
+                self.create_line(gleft+1, y, gright-1, y, fill=self.__dcolor, tags='base')
             else:
-                self.create_line(21, y, w-201, y, fill=self.__sdcolor, tags='base')
+                self.create_line(gleft+1, y, gright-1, y, fill=self.__sdcolor, tags='base')
             y += 10
     
     def __draw_all(self):
