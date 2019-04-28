@@ -23,17 +23,17 @@ class GraficoLinha(tk.Canvas):
     Uso
     ===
 
-    Antes de desenhar, deve-se definir os atributos da classe:
-    - series:  lista contendo várias outras listas de valores do eixo y do gráfico.
-    - x_init:  valor inicial do eixo x.
-    - x_div:   valor de cada divisão de x.
-    - x_label: rótulo do eixo x.
-    - y_div:   lista contendo o valor de cada divisão relativa ao índice da série de valores
-               definidos no atributo series.
-    - labels:  lista contendo o rótulo de cada série de valores.
-    - colors:  lista contendo a cor da linha de cada série de valores.
-    - y_0:     deslocamento em divisões do eixo y.
-    - x_0:     deslocamento em divisões do eixo x.
+    Antes de desenhar, os atributos da classe devem ser definidos:
+      - series:  lista contendo várias outras listas de valores do eixo y do gráfico.
+      - x_init:  valor inicial do eixo x.
+      - x_div:   valor de cada divisão de x.
+      - x_label: rótulo do eixo x.
+      - y_div:   lista contendo o valor de cada divisão relativa ao índice da série de valores
+        definidos no atributo series.
+      - labels:  lista contendo o rótulo de cada série de valores.
+      - colors:  lista contendo a cor da linha de cada série de valores.
+      - y_0:     deslocamento em divisões do eixo y.
+      - x_0:     deslocamento em divisões do eixo x.
 
     """
 
@@ -169,7 +169,4 @@ def get_graphico(title,series, x_max, x_div, x_label, colors, y_div, labels,x_0=
     gr.draw()
     win.mainloop()
     return gr
-
-if __name__ == "__main__":
-    get_graphico('Gráfico',[],1,0.01,'s',('red',),(10,),('teste',))
         
