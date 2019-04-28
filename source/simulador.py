@@ -3,7 +3,7 @@
 
 """
 +----------------------------------------+
-| MotorSimu v1.0                         |
+| MotorSimu v0.1                         |
 | Autor: João Paulo F da Silva           |
 | website: jpcompweb.com.br              |
 +----------------------------------------+
@@ -107,7 +107,7 @@ class SimuApp(tk.Tk):
         self.divtorque = tk.Entry(pansimu,width=6)
         self.divtorque.bind('<Return>', self.__simular)
         self.divtorque.bind('<KeyRelease>',valida_num)        
-        self.divtorque.insert(0,'12')
+        self.divtorque.insert(0,'10')
         
         self.divpot = tk.Entry(pansimu,width=6)
         self.divpot.bind('<Return>', self.__simular)
@@ -127,7 +127,7 @@ class SimuApp(tk.Tk):
         self.divcr = tk.Entry(pansimu,width=6)
         self.divcr.bind('<Return>', self.__simular)
         self.divcr.bind('<KeyRelease>',valida_num)
-        self.divcr.insert(0,'12')
+        self.divcr.insert(0,'10')
         
         panesq.grid(row=0,column=0, sticky=tk.N)
         mainpan.grid(row=0,column=1, sticky=tk.N)
@@ -262,7 +262,7 @@ class SimuApp(tk.Tk):
     def __simular(self, *args):
             
         f = lambda x: float(x.get()) if x.get()!='' else 0
-        g = lambda x: f(x) * 19
+        g = lambda x: f(x)
         
         pars = (f(self.v_n),f(self.freq),
                 f(self.pols),f(self.m_r1),
@@ -279,11 +279,10 @@ class SimuApp(tk.Tk):
             carga.f_torque = eval('lambda w: %s' %  self.c_func.get().lower().replace('^','**').replace('sqrt','math.sqrt'))
         except:
             carga.f_torque = None
-    
-        #tf = self.__scalex * f(self.tf)
+        
         divt = self.__scalex * f(self.dt)
         tf = divt * 25
-        AMOSTRAS = 200
+        AMOSTRAS = tf / 0.005
         dt = tf / AMOSTRAS
         t = 0
         to = 0
@@ -303,9 +302,11 @@ class SimuApp(tk.Tk):
         self.grafic.x_max = tf
         self.grafic.x_div = divt
         self.grafic.x_label = 's'
-        self.grafic.y_max = self.scale((g(self.divtorque),g(self.divpot),g(self.divcorr),g(self.divrpm),g(self.divcr)))
+        self.grafic.y_div = self.scale((g(self.divtorque),g(self.divpot),g(self.divcorr),g(self.divrpm),g(self.divcr)))
         self.grafic.colors = '#7D90FB','#FBB461','#FF96E8','#B4FBF8','#F44D49'
         self.grafic.labels = 'Conjugado','Potência(HP)','Corrente','RPM','Cr'
+        self.grafic.x_0 = -21
+        self.grafic.y_0 = -21
         self.grafic.draw()
 
 if __name__ == "__main__":
