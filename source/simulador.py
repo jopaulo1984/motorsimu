@@ -3,7 +3,7 @@
 
 """
 +----------------------------------------+
-| MotorSimu v0.1                         |
+| MotorSimu v0.2                         |
 | Autor: João Paulo F da Silva           |
 | website: jpcompweb.com.br              |
 +----------------------------------------+
@@ -16,7 +16,7 @@ O MotorSimu é um simulador de curvas de partida e regime de motores de induçã
 """
 
 import tkinter as tk
-import graficos as gr
+import graficos2 as gr
 import motorinducao as mi
 import carga as cg
 import ast
@@ -36,62 +36,46 @@ class SimuApp(tk.Tk):
         pansimu     = tk.Frame(panesq, bd=1)        
         panbuttons  = tk.Frame(panesq, bd=1, pady=10)
         
-        self.grafic = gr.GraficoLinha(mainpan)
-        
-        def valida_num(evt):
-            pts = 0
-            for i, c in enumerate(evt.widget.get()):
-                if not c in ('0','1','2','3','4','5','6','7','8','9','.',',','-'):
-                    evt.widget.delete(i)
-                elif c == '.':
-                    if pts > 0:
-                        evt.widget.delete(i)
-                    pts += 1
-                elif c == ',':
-                    evt.widget.delete(i)
-                    if pts == 0:
-                        evt.widget.insert(i,'.')
-                        pts += 1
-                elif c in '-' and i > 0:
-                    evt.widget.delete(i)
+        self.grafic = gr.LineGraphic(mainpan)
+        self.grafic.set_axes(-20,-20)
         
         #== motor ==
         self.m_r1 = tk.Entry(panmot)
         self.m_r1.insert(0,'0.294')
-        self.m_r1.bind('<KeyRelease>',valida_num)
+        self.m_r1.bind('<KeyRelease>',self.__valida_num)
         
         self.m_x1 = tk.Entry(panmot)
         self.m_x1.insert(0,'0.503')
-        self.m_x1.bind('<KeyRelease>',valida_num)
+        self.m_x1.bind('<KeyRelease>',self.__valida_num)
         
         self.m_xo = tk.Entry(panmot)
         self.m_xo.insert(0,'13.25')
-        self.m_xo.bind('<KeyRelease>',valida_num)
+        self.m_xo.bind('<KeyRelease>',self.__valida_num)
         
         self.m_r2 = tk.Entry(panmot)
         self.m_r2.insert(0,'0.144')
-        self.m_r2.bind('<KeyRelease>',valida_num)
+        self.m_r2.bind('<KeyRelease>',self.__valida_num)
         
         self.m_x2 = tk.Entry(panmot)
         self.m_x2.insert(0,'0.209')
-        self.m_x2.bind('<KeyRelease>',valida_num)
+        self.m_x2.bind('<KeyRelease>',self.__valida_num)
         
         self.v_n  = tk.Entry(panmot)
         self.v_n .insert(0,'220')
-        self.v_n .bind('<KeyRelease>',valida_num)
+        self.v_n .bind('<KeyRelease>',self.__valida_num)
         
         self.freq = tk.Entry(panmot)
         self.freq.insert(0,'60')
-        self.freq.bind('<KeyRelease>',valida_num)
+        self.freq.bind('<KeyRelease>',self.__valida_num)
         
         self.pols = tk.Entry(panmot)
         self.pols.insert(0,'6')
-        self.pols.bind('<KeyRelease>',valida_num)
+        self.pols.bind('<KeyRelease>',self.__valida_num)
         
         #== carga ===
         self.c_I    = tk.Entry(pancarg)
         self.c_I.bind('<Return>', self.__simular)
-        self.c_I.bind('<KeyRelease>',valida_num)
+        self.c_I.bind('<KeyRelease>',self.__valida_num)
         self.c_I.insert(0,'0.4')
         
         self.c_func = tk.Entry(pancarg)
@@ -101,32 +85,32 @@ class SimuApp(tk.Tk):
         #== simulação ==
         self.dt = tk.Entry(pansimu,width=6)
         self.dt.bind('<Return>', self.__simular)
-        self.dt.bind('<KeyRelease>',valida_num)
+        self.dt.bind('<KeyRelease>',self.__valida_num)
         self.dt.insert(0,'0.04')
         
         self.divtorque = tk.Entry(pansimu,width=6)
         self.divtorque.bind('<Return>', self.__simular)
-        self.divtorque.bind('<KeyRelease>',valida_num)        
+        self.divtorque.bind('<KeyRelease>',self.__valida_num)        
         self.divtorque.insert(0,'10')
         
         self.divpot = tk.Entry(pansimu,width=6)
         self.divpot.bind('<Return>', self.__simular)
-        self.divpot.bind('<KeyRelease>',valida_num)        
+        self.divpot.bind('<KeyRelease>',self.__valida_num)        
         self.divpot.insert(0,'0')
         
         self.divcorr = tk.Entry(pansimu,width=6)
         self.divcorr.bind('<Return>', self.__simular)
-        self.divcorr.bind('<KeyRelease>',valida_num)
+        self.divcorr.bind('<KeyRelease>',self.__valida_num)
         self.divcorr.insert(0,'0')
         
         self.divrpm = tk.Entry(pansimu,width=6)
         self.divrpm.bind('<Return>', self.__simular)
-        self.divrpm.bind('<KeyRelease>',valida_num)
+        self.divrpm.bind('<KeyRelease>',self.__valida_num)
         self.divrpm.insert(0,'100')
         
         self.divcr = tk.Entry(pansimu,width=6)
         self.divcr.bind('<Return>', self.__simular)
-        self.divcr.bind('<KeyRelease>',valida_num)
+        self.divcr.bind('<KeyRelease>',self.__valida_num)
         self.divcr.insert(0,'10')
         
         panesq.grid(row=0,column=0, sticky=tk.N)
@@ -220,6 +204,24 @@ class SimuApp(tk.Tk):
         self.title('Curvas Motor 3ph')
                 
         self.mainloop()
+        
+    def __valida_num(self, evt):
+        pts = 0
+        for i, c in enumerate(evt.widget.get()):
+            if not c in ('0','1','2','3','4','5','6','7','8','9','.',',','-'):
+                evt.widget.delete(i)
+            elif c == '.':
+                if pts > 0:
+                    evt.widget.delete(i)
+                pts += 1
+            elif c == ',':
+                evt.widget.delete(i)
+                if pts == 0:
+                    evt.widget.insert(i,'.')
+                    pts += 1
+            elif c in '-' and i > 0:
+                evt.widget.delete(i)
+        self.__simular()
     
     def y_up(self):
         if self.__scaley > 0.2:
@@ -249,20 +251,21 @@ class SimuApp(tk.Tk):
         self.__scalex = 1.0
         self.__simular()
     
-    def scale(self, value):
+    def __scale(self, value, scale):
         if type(value) in (int, float):
-            return self.__scaley * value
+            return scale * value
         elif type(value) in (tuple, list):
             result = []
             for v in value:
-                result.append(self.scale(v))
+                result.append(self.__scale(v))
             return result
         return value
         
     def __simular(self, *args):
             
         f = lambda x: float(x.get()) if x.get()!='' else 0
-        g = lambda x: f(x)
+        g = lambda x: self.__scale(f(x), self.__scalex)
+        h = lambda y: self.__scale(f(y), self.__scaley)
         
         pars = (f(self.v_n),f(self.freq),
                 f(self.pols),f(self.m_r1),
@@ -280,38 +283,42 @@ class SimuApp(tk.Tk):
         except:
             carga.f_torque = None
         
-        divt = self.__scalex * f(self.dt)
+        divt = h(self.dt)
+        
         tf = divt * 25
-        AMOSTRAS = tf / 0.005
-        dt = tf / AMOSTRAS
+        dt = 0.005
+        
         t = 0
-        to = 0
-        values = [],[],[],[],[]
-        k = 0
+        to = t - dt
+        
+        divrpm = self.__scale(100, self.__scalex)
+        
+        Tserie = gr.GraphicSerie([],divrpm,h(self.divtorque),'w','Cm(w)','#6D87FF')
+        Tpoten = gr.GraphicSerie([],divrpm,h(self.divpot)   ,'w','Pm(w)','#F24F4F')
+        Tcorre = gr.GraphicSerie([],divrpm,h(self.divcorr)  ,'w','I(w)' ,'#F24FB7')
+        Ttempo = gr.GraphicSerie([],divrpm,divt             ,'w','t(w)' ,'#FDFD36')
+        
         while dt > 0 and t < tf:
             mvalues = motor.get_values(t, to, carga)
-            values[0].append(mvalues['torque'])
-            values[1].append(mvalues['hp'])
+            Tserie.points.append((mvalues['rpm'],mvalues['torque']))
+            Tpoten.points.append((mvalues['rpm'],mvalues['hp']))
+            Tcorre.points.append((mvalues['rpm'],mvalues['corrente']))
+            Ttempo.points.append((mvalues['rpm'],t))
+            """values[1].append(mvalues['hp'])
             values[2].append(mvalues['corrente'])
             values[3].append(mvalues['rpm'])
-            values[4].append(mvalues['Tres'])
+            values[4].append(mvalues['Tres'])"""
             to = t
             t += dt
         
-        self.grafic.series = values
-        self.grafic.x_max = tf
-        self.grafic.x_div = divt
-        self.grafic.x_label = 's'
-        self.grafic.y_div = self.scale((g(self.divtorque),g(self.divpot),g(self.divcorr),g(self.divrpm),g(self.divcr)))
-        self.grafic.colors = '#7D90FB','#FBB461','#FF96E8','#B4FBF8','#F44D49'
-        self.grafic.labels = 'Conjugado','Potência(HP)','Corrente','RPM','Cr'
-        self.grafic.x_0 = -21
-        self.grafic.y_0 = -21
-        self.grafic.draw()
+        self.grafic.series = [Tserie,Tpoten,Tcorre,Ttempo]
 
 if __name__ == "__main__":
+    win = SimuApp()
+    """
     try:
         win = SimuApp()
     except Exception as ex:
         print(ex)
+    """
     exit(0)
