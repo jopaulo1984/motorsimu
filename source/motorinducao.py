@@ -31,7 +31,7 @@ class Motor3Ph:
         self.__xo = xo
         self.__x2 = x2
         self.__r2 = r2
-        self.__rev_s = (2 * self.__freq) / self.__polos
+        self.__rev_s = (2 * self.__freq) / self.__polos if self.__polos > 0 else 1e6
         self.__rpm_sinc = self.__rev_s * 60
         self.__w_s = 2 * 3.14 * self.__rev_s
         self.__Mr = Mrotor
@@ -81,7 +81,8 @@ class Motor3Ph:
         
         Tr_mot = self.__w_rotor * self.__Tmax * 0.01 / self.__w_s
         Tres = carga.get_torque(self.__w_rotor)
-        a = (Cm - Tres - Tr_mot) / (self.__Mr + carga.I)
+        I = self.__Mr + carga.I
+        a = (Cm - Tres - Tr_mot) / I if I > 0 else 1e6
         self.__w_rotor += a * (t - to)
         
         values['fp'] = math.cos(a)
