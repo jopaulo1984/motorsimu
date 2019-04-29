@@ -16,7 +16,7 @@ O MotorSimu é um simulador de curvas de partida e regime de motores de induçã
 """
 
 import tkinter as tk
-import graficos2 as gr
+import graficos as gr
 import motorinducao as mi
 import carga as cg
 import ast
