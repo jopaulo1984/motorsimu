@@ -304,10 +304,6 @@ class SimuApp(tk.Tk):
             Tpoten.points.append((mvalues['rpm'],mvalues['hp']))
             Tcorre.points.append((mvalues['rpm'],mvalues['corrente']))
             Ttempo.points.append((mvalues['rpm'],t))
-            """values[1].append(mvalues['hp'])
-            values[2].append(mvalues['corrente'])
-            values[3].append(mvalues['rpm'])
-            values[4].append(mvalues['Tres'])"""
             to = t
             t += dt
         
@@ -315,10 +311,4 @@ class SimuApp(tk.Tk):
 
 if __name__ == "__main__":
     win = SimuApp()
-    """
-    try:
-        win = SimuApp()
-    except Exception as ex:
-        print(ex)
-    """
     exit(0)
