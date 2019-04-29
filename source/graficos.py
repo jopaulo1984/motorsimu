@@ -35,7 +35,7 @@ class LineGraphic(tk.Canvas):
         self.__y_0 = 0
         self.__x_0 = 0
         self.config(width=w, height=h)
-        self.set_colors('#1A1A1A','#008000','#1F571F','#0EAC0E')
+        self.set_colors('#232323','#E5E5E5','#175C17','#1A3E1A','#00A900')
     
     @property
     def series(self):
@@ -63,8 +63,9 @@ class LineGraphic(tk.Canvas):
         self.__y_0 = y_0
         self.__draw_all()
     
-    def set_colors(self, bg, div, subdiv, axes):
+    def set_colors(self, bg, fg, div, subdiv, axes):
         self.__bg = bg
+        self.__fg = fg
         self.__dcolor = div
         self.__sdcolor = subdiv
         self.__xycolor = axes
@@ -83,8 +84,6 @@ class LineGraphic(tk.Canvas):
         gbottom = h - 20
         gw = gright - gleft
         gh = gbottom - gtop
-        
-        print(gw,gh)
         
         f = lambda i: int(i/10)
         
@@ -130,26 +129,30 @@ class LineGraphic(tk.Canvas):
         y_0 = f_0(-self.y_0, gh / 10)
         x_0 = f_0(self.x_0, gw / 10)
 
-        self.create_line(gleft, y_0, gright, y_0, fill='#2DD500',tags='series')
-        self.create_line(x_0, gtop, x_0, gbottom, fill='#2DD500',tags='series')
+        self.create_line(gleft, y_0, gright, y_0, fill=self.__xycolor,tags='series')
+        self.create_line(x_0, gtop, x_0, gbottom, fill=self.__xycolor,tags='series')
                 
         f = lambda value, y_div: y_0 - (20/y_div) * value
         g = lambda value, x_div: x_0 + (20/x_div) * value
 
         def get_limited_points(p1,p2):
             def _f(i1,i2,l1,l2):
-                if i1 < l1 and i2 < l1: return None,None
-                if i1 < l1 and i2 > l1: i1 = l1
-                if i1 > l1 and i2 < l1: i2 = l1
-                if i1 > l2 and i2 > l2: return None,None
-                if i1 < l2 and i2 > l2: i1 = l2
-                if i1 > l2 and i2 < l2: i2 = l2
+                d1 = i1 - l1   #i1 = 20 L1 = 21
+                d2 = i2 - l1   #
+                if d1 <  0 and d2 <  0: return None,None
+                if d1 <  0 and d2 >= 0: i1 = l1
+                if d1 >= 0 and d2 <  0: i2 = l1
+                d1 = l2 - i1
+                d2 = l2 - i2
+                if d1 <  0 and d2 <  0: return None,None
+                if d1 <  0 and d2 >= 0: i1 = l2
+                if d1 >= 0 and d2 <  0: i2 = l2
                 return i1,i2
             x1,y1 = p1
             x2,y2 = p2
-            x1,x2 = _f(x1,x2,gleft,gright)
+            x1,x2 = _f(x1,x2,gleft+1,gright-1)
             if x1 is None: return None,None,None,None
-            y1,y2 = _f(y1,y2,gtop,gbottom)
+            y1,y2 = _f(y1,y2,gtop+1,gbottom-1)
             if y1 is None: return None,None,None,None
             return x1,y1,x2,y2
                    
@@ -183,7 +186,7 @@ class LineGraphic(tk.Canvas):
             y = yl0 * 60 + 35
             yl0 += 1
             self.create_line(xl1, y, xl2, y, fill=serie.color, width=4, tags='series')
-            self.create_text(xl3, y - 10, font=('Courier New', 9), text='%s\nx=%0.2f/div\ny=%0.2f/div\n' % (fleg(serie.y_label),serie.x_div,serie.y_div), tags='series', anchor=tk.NW, fill='white')
+            self.create_text(xl3, y - 10, font=('Courier New', 9), text='%s\nx=%0.2f/div\ny=%0.2f/div\n' % (fleg(serie.y_label),serie.x_div,serie.y_div), tags='series', anchor=tk.NW, fill=self.__fg)
         
 def get_graphico(title,series,x_0=0,y_0=0):
     win = tk.Tk()
