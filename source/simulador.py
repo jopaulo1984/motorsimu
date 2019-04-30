@@ -22,7 +22,7 @@ import carga as cg
 import ast
 import math
 
-class SimuApp(tk.Tk):
+class SimuAppWindow(tk.Tk):
     def __init__(self, *args, **keyargs):
         super().__init__(*args, **keyargs)
         
