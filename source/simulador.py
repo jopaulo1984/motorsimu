@@ -132,35 +132,47 @@ class SimuAppWindow(tk.Tk):
         tk.Button(panesq,text='Simular',command=self.__simular).pack()
         
         #== panmot ==
-        tk.Label(panmot,text='r1').grid(row=0,column=0)
-        self.m_r1.grid(row=0,column=1)
+        self.__v = tk.IntVar()
+        self.__v.set(1)
         
-        tk.Label(panmot,text='x1').grid(row=1,column=0)
-        self.m_x1.grid(row=1,column=1)
+        pan = tk.Frame(panmot)        
+        pan.grid(row=0,column=0,columnspan=2,sticky=tk.W)
         
-        tk.Label(panmot,text='xo').grid(row=2,column=0)
-        self.m_xo.grid(row=2,column=1)
+        tk.Label(pan,text='Fechamento').grid(row=0,column=0,sticky=tk.W)
+        tk.Radiobutton(pan,text='Estrela', variable=self.__v, value=1).grid(row=0,column=1,sticky=tk.W)
+        tk.Radiobutton(pan,text='Delta', variable=self.__v, value=2).grid(row=0,column=2,sticky=tk.W)
         
-        tk.Label(panmot,text='r2').grid(row=3,column=0)
-        self.m_r2.grid(row=3,column=1)
+        tk.Label(panmot,text='Circuito equivalente').grid(row=1,column=0,columnspan=2,sticky=tk.W,ipady=5)
         
-        tk.Label(panmot,text='x2').grid(row=4,column=0)
-        self.m_x2.grid(row=4,column=1)
+        tk.Label(panmot,text='r1').grid(row=2,column=0,sticky=tk.W)
+        self.m_r1.grid(row=2,column=1,sticky=tk.W)
         
-        tk.Label(panmot,text='V').grid(row=5,column=0)
-        self.v_n.grid(row=5,column=1)
+        tk.Label(panmot,text='x1').grid(row=3,column=0,sticky=tk.W)
+        self.m_x1.grid(row=3,column=1,sticky=tk.W)
         
-        tk.Label(panmot,text='f').grid(row=6,column=0)
-        self.freq.grid(row=6,column=1)
+        tk.Label(panmot,text='xo').grid(row=4,column=0,sticky=tk.W)
+        self.m_xo.grid(row=4,column=1,sticky=tk.W)
         
-        tk.Label(panmot,text='P').grid(row=7,column=0)
-        self.pols.grid(row=7,column=1)
+        tk.Label(panmot,text='r2').grid(row=5,column=0,sticky=tk.W)
+        self.m_r2.grid(row=5,column=1,sticky=tk.W)
+        
+        tk.Label(panmot,text='x2').grid(row=6,column=0,sticky=tk.W)
+        self.m_x2.grid(row=6,column=1,sticky=tk.W)
+        
+        tk.Label(panmot,text='V').grid(row=7,column=0,sticky=tk.W)
+        self.v_n.grid(row=7,column=1,sticky=tk.W)
+        
+        tk.Label(panmot,text='f').grid(row=8,column=0,sticky=tk.W)
+        self.freq.grid(row=8,column=1,sticky=tk.W)
+        
+        tk.Label(panmot,text='P').grid(row=9,column=0,sticky=tk.W)
+        self.pols.grid(row=9,column=1,sticky=tk.W)
         
         #== pancarg ==
-        tk.Label(pancarg,text='M').grid(row=0,column=0)
+        tk.Label(pancarg,text='M').grid(row=0,column=0,sticky=tk.W)
         self.c_I.grid(row=0,column=1)
         
-        tk.Label(pancarg,text='Cr(w)').grid(row=1,column=0)
+        tk.Label(pancarg,text='Cr(w)').grid(row=1,column=0,sticky=tk.W)
         self.c_func.grid(row=1,column=1)
         
         #== panbuttons ==
@@ -198,11 +210,11 @@ class SimuAppWindow(tk.Tk):
         tk.Label(pansimu,text='Conjugado resistente').grid(row=7,column=0, sticky=tk.W)
         self.divcr.grid(row=7,column=1)
         tk.Label(pansimu,text='/div').grid(row=7,column=2)
-                
+        
         self.__simular()
         
         self.title('Curvas Motor 3ph')
-                
+        
         self.mainloop()
         
     def __valida_num(self, evt):
@@ -272,7 +284,11 @@ class SimuAppWindow(tk.Tk):
                 f(self.m_x1),f(self.m_xo),
                 f(self.m_r2),f(self.m_x2))
         
-        motor = mi.Motor3PhY()
+        if self.__v.get() == 1:
+          motor = mi.Motor3PhY()
+        else:
+          motor = mi.Motor3PhD()
+          
         motor.set_parametros(*pars)
         
         carga = cg.CargaRotativa()
