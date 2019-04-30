@@ -310,5 +310,5 @@ class SimuAppWindow(tk.Tk):
         self.grafic.series = [Tserie,Tpoten,Tcorre,Ttempo]
 
 if __name__ == "__main__":
-    win = SimuApp()
+    win = SimuAppWindow()
     exit(0)
