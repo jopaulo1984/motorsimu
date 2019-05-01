@@ -83,35 +83,30 @@ class SimuAppWindow(tk.Tk):
         self.c_func.insert(0,'(50/125) * w')
         
         #== simulação ==
-        self.dt = tk.Entry(pansimu,width=6)
-        self.dt.bind('<Return>', self.__simular)
-        self.dt.bind('<KeyRelease>',self.__valida_num)
-        self.dt.insert(0,'0.04')
+        def insert_simu_entry(label, value, line):
+            entry = tk.Entry(pansimu,width=6)
+            entry.bind('<Return>', self.__simular)
+            entry.bind('<KeyRelease>',self.__valida_num)
+            entry.insert(0, value)
+            tk.Label(pansimu,text=label).grid(row=line,column=0,sticky=tk.W)
+            entry.grid(row=line,column=1,sticky=tk.W)
+            tk.Label(pansimu,text='/div').grid(row=line,column=2)
+            return entry
         
-        self.divtorque = tk.Entry(pansimu,width=6)
-        self.divtorque.bind('<Return>', self.__simular)
-        self.divtorque.bind('<KeyRelease>',self.__valida_num)        
-        self.divtorque.insert(0,'10')
+        panaxex = tk.Frame(pansimu)
+        panaxex.grid(row=0,column=0,columnspan=3,ipady=5)
+        self.__axex = tk.IntVar()
+        self.__axex.set(0)
+        tk.Label(panaxex,text='Eixo x').grid(row=0,column=0)
+        tk.Radiobutton(panaxex, variable=self.__axex, value=0, text='Rotação(RPM)', command=self.__simular).grid(row=0,column=1)
+        tk.Radiobutton(panaxex, variable=self.__axex, value=1, text='Tempo(s)', command=self.__simular).grid(row=0,column=2)
         
-        self.divpot = tk.Entry(pansimu,width=6)
-        self.divpot.bind('<Return>', self.__simular)
-        self.divpot.bind('<KeyRelease>',self.__valida_num)        
-        self.divpot.insert(0,'0')
-        
-        self.divcorr = tk.Entry(pansimu,width=6)
-        self.divcorr.bind('<Return>', self.__simular)
-        self.divcorr.bind('<KeyRelease>',self.__valida_num)
-        self.divcorr.insert(0,'0')
-        
-        self.divrpm = tk.Entry(pansimu,width=6)
-        self.divrpm.bind('<Return>', self.__simular)
-        self.divrpm.bind('<KeyRelease>',self.__valida_num)
-        self.divrpm.insert(0,'100')
-        
-        self.divcr = tk.Entry(pansimu,width=6)
-        self.divcr.bind('<Return>', self.__simular)
-        self.divcr.bind('<KeyRelease>',self.__valida_num)
-        self.divcr.insert(0,'10')
+        self.dt         = insert_simu_entry('Tempo(s)', '0.04', 1)
+        self.divtorque  = insert_simu_entry('Conjugado M.(N.m)', '10', 2)
+        self.divpot     = insert_simu_entry('Potência(HP)', '0', 3)
+        self.divcorr    = insert_simu_entry('Corrente(A)', '0', 4)
+        self.divrpm     = insert_simu_entry('Rotação(RPM)', '100', 5)
+        self.divcr      = insert_simu_entry('Conjugado R.(N.m)', '10', 6)
         
         panesq.grid(row=0,column=0, sticky=tk.N)
         mainpan.grid(row=0,column=1, sticky=tk.N)
@@ -132,15 +127,15 @@ class SimuAppWindow(tk.Tk):
         tk.Button(panesq,text='Simular',command=self.__simular).pack()
         
         #== panmot ==
-        self.__v = tk.IntVar()
-        self.__v.set(1)
+        self.__motortype = tk.IntVar()
+        self.__motortype.set(1)
         
         pan = tk.Frame(panmot)        
         pan.grid(row=0,column=0,columnspan=2,sticky=tk.W)
         
         tk.Label(pan,text='Fechamento').grid(row=0,column=0,sticky=tk.W)
-        tk.Radiobutton(pan,text='Estrela', variable=self.__v, value=1).grid(row=0,column=1,sticky=tk.W)
-        tk.Radiobutton(pan,text='Delta', variable=self.__v, value=2).grid(row=0,column=2,sticky=tk.W)
+        tk.Radiobutton(pan,text='Estrela', variable=self.__motortype, value=1, command=self.__simular).grid(row=0,column=1,sticky=tk.W)
+        tk.Radiobutton(pan,text='Delta', variable=self.__motortype, value=2, command=self.__simular).grid(row=0,column=2,sticky=tk.W)
         
         tk.Label(panmot,text='Circuito equivalente').grid(row=1,column=0,columnspan=2,sticky=tk.W,ipady=5)
         
@@ -185,31 +180,6 @@ class SimuAppWindow(tk.Tk):
         tk.Button(panbuttons,text='X-',command=self.x_down).grid(row=1,column=3)
         tk.Button(panbuttons,text='X0',command=self.x_reset).grid(row=1,column=4)
         tk.Button(panbuttons,text='X+',command=self.x_up).grid(row=1,column=5)
-        
-        #== pansimu ==
-        tk.Label(pansimu,text='Tempo(s)').grid(row=0,column=0,sticky=tk.W)
-        self.dt.grid(row=0,column=1,sticky=tk.W)
-        tk.Label(pansimu,text='/div').grid(row=0,column=2)
-        
-        tk.Label(pansimu,text='Conjugado motor').grid(row=3,column=0, sticky=tk.W)
-        self.divtorque.grid(row=3,column=1)
-        tk.Label(pansimu,text='/div').grid(row=3,column=2)
-        
-        tk.Label(pansimu,text='Potência(HP)').grid(row=4,column=0, sticky=tk.W)
-        self.divpot.grid(row=4,column=1)
-        tk.Label(pansimu,text='/div').grid(row=4,column=2)
-        
-        tk.Label(pansimu,text='Corrente').grid(row=5,column=0, sticky=tk.W)
-        self.divcorr.grid(row=5,column=1)
-        tk.Label(pansimu,text='/div').grid(row=5,column=2)
-        
-        tk.Label(pansimu,text='Rotação').grid(row=6,column=0, sticky=tk.W)
-        self.divrpm.grid(row=6,column=1)
-        tk.Label(pansimu,text='/div').grid(row=6,column=2)
-        
-        tk.Label(pansimu,text='Conjugado resistente').grid(row=7,column=0, sticky=tk.W)
-        self.divcr.grid(row=7,column=1)
-        tk.Label(pansimu,text='/div').grid(row=7,column=2)
         
         self.__simular()
         
@@ -284,7 +254,7 @@ class SimuAppWindow(tk.Tk):
                 f(self.m_x1),f(self.m_xo),
                 f(self.m_r2),f(self.m_x2))
         
-        if self.__v.get() == 1:
+        if self.__motortype.get() == 1:
           motor = mi.Motor3PhY()
         else:
           motor = mi.Motor3PhD()
@@ -305,25 +275,33 @@ class SimuAppWindow(tk.Tk):
         dt = 0.005
         
         t = 0
-        to = t - dt
+        to = -dt
         
-        divrpm = self.__scale(100, self.__scalex)
+        #divr = 
+        divx = g(self.divrpm) if self.__axex.get() == 0 else self.__scale(divt, self.__scalex)
         
-        Tserie = gr.GraphicSerie([],divrpm,h(self.divtorque),'w','Cm(w)','#6D87FF')
-        Tpoten = gr.GraphicSerie([],divrpm,h(self.divpot)   ,'w','Pm(w)','#F24F4F')
-        Tcorre = gr.GraphicSerie([],divrpm,h(self.divcorr)  ,'w','I(w)' ,'#F24FB7')
-        Ttempo = gr.GraphicSerie([],divrpm,divt             ,'w','t(w)' ,'#FDFD36')
+        Tserie = gr.GraphicSerie([],divx,h(self.divtorque),'','Conjugado M.(N.m)','#6D87FF')
+        Tpoten = gr.GraphicSerie([],divx,h(self.divpot)   ,'','Potência(HP)','#F24F4F')
+        Tcorre = gr.GraphicSerie([],divx,h(self.divcorr)  ,'','Corrente(A)' ,'#F24FB7')
+        Tconjr = gr.GraphicSerie([],divx,h(self.divcr)    ,'','Conjugado R.(N.m)','#885AE1')
+        
+        Tvar = gr.GraphicSerie([],divx,divt,'','t(w)' ,'#FDFD36') if  self.__axex.get() == 0 else gr.GraphicSerie([],divx,h(self.divrpm),'','w(t)' ,'#FFB340')
         
         while dt > 0 and t < tf:
             mvalues = motor.get_values(t, to, carga)
-            Tserie.points.append((mvalues['rpm'],mvalues['torque']))
-            Tpoten.points.append((mvalues['rpm'],mvalues['hp']))
-            Tcorre.points.append((mvalues['rpm'],mvalues['corrente']))
-            Ttempo.points.append((mvalues['rpm'],t))
+            x_ = mvalues['rpm'] if self.__axex.get() == 0 else t
+            Tserie.points.append((x_,mvalues['torque']))
+            Tpoten.points.append((x_,mvalues['hp']))
+            Tcorre.points.append((x_,mvalues['corrente']))
+            Tconjr.points.append((x_,mvalues['Tres']))
+            if self.__axex.get() == 0:                
+                Tvar.points.append((mvalues['rpm'],t))
+            else:
+                Tvar.points.append((t,mvalues['rpm']))
             to = t
             t += dt
         
-        self.grafic.series = [Tserie,Tpoten,Tcorre,Ttempo]
+        self.grafic.series = [Tserie,Tpoten,Tcorre,Tconjr,Tvar]
 
 if __name__ == "__main__":
     win = SimuAppWindow()
