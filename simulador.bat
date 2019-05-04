@@ -1,1 +1,1 @@
-py simulador.py
+py source\simulador.py
