@@ -346,4 +346,5 @@ class SimuAppWindow(tk.Tk):
 
 if __name__ == "__main__":
     win = SimuAppWindow()
+    
     exit(0)

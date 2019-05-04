@@ -17,6 +17,7 @@ O `graphics` é um módulo que contém componentes para visualização gráfica 
 
 import tkinter as tk
 
+
 class GraphicLegend:
     def __init__(self,group,left=0,top=0,label='legend',lcolor='#0',ltext='',lfont=('Courier New', 9)):
         self.__group        = group
