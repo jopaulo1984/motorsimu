@@ -230,7 +230,10 @@ class LineGraphic(tk.Canvas):
         g_0 = lambda i, n, i_0: i - ((n + i_0) / 2)    
         x_0 = f_0(self.x_0, gw / subdivw)     
         
-        for i, serie in enumerate(self.series):
+        i = 0
+        for serie in self.series:
+            
+            if serie is None or 0 in (serie.x_div, serie.y_div): continue
             
             def get_pt(x):
                 vx = serie.x_div * (x - x_0) / self.__divsize
@@ -246,6 +249,7 @@ class LineGraphic(tk.Canvas):
             pt = get_pt(offx)
             if pt is None: continue
             self.legendsgroup.legends[i].text = 'x <- %0.2f\ny <- %0.2f' % pt
+            i += 1
         
     def __draw_base(self):
         self.delete('base')

@@ -39,7 +39,7 @@ class SimuAppWindow(tk.Tk):
         body.pack(fill=tk.BOTH, anchor=tk.N, expand=1)
         statusbar.pack(fill=tk.X, anchor=tk.S, side=tk.BOTTOM)
         
-        panleft = tk.Frame(body, padx=5, pady=5, borderwidth=1, relief=tk.RIDGE)        
+        panleft = tk.Frame(body, padx=5, pady=5, borderwidth=1, relief=tk.RAISED)        
         panleft.pack(side=tk.LEFT, anchor=tk.N, fill=tk.Y)
         
         self.mainpan = tk.Frame(body, bg='#FFFFFF')        
@@ -219,7 +219,6 @@ class SimuAppWindow(tk.Tk):
                     pts += 1
             elif c in '-' and i > 0:
                 evt.widget.delete(i)
-        #self.__simular()
     
     def y_up(self):
         if self.__scaley > 0.2:
@@ -266,7 +265,6 @@ class SimuAppWindow(tk.Tk):
             return
         self.__lock_size = True
         size = evt.width - 10, evt.height - 10
-        #print(size)
         self.grafic.set_size(*size)
     
     def __simular(self, *args):
@@ -324,7 +322,6 @@ class SimuAppWindow(tk.Tk):
         
         Tvar = None if  self.__axex.get() == 0 else gr.GraphicSerie([],divx,h(self.divrpm),'','w(t)' ,'#FFB340')
         
-        #self.msg.set('0% ')
         while dt > 0 and t < tf:
             __simu_percent(tf,t)
             mvalues = motor.get_values(t, to, carga)
@@ -333,16 +330,11 @@ class SimuAppWindow(tk.Tk):
             Tpoten.points.append((x_,mvalues['hp']))
             Tcorre.points.append((x_,mvalues['corrente']))
             Tconjr.points.append((x_,mvalues['Tres']))
-            if self.__axex.get() == 0:                
-                #Tvar.points.append((mvalues['rpm'],t))
-                pass
-            else:
+            if self.__axex.get() != 0:
                 Tvar.points.append((t,mvalues['rpm']))
             to = t
             t += dt
         self.grafic.series = [Tserie,Tpoten,Tcorre,Tconjr,Tvar]
-        
-        #self.msg.set('Concluído!')
 
 if __name__ == "__main__":
     win = SimuAppWindow()
