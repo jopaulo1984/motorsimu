@@ -417,13 +417,17 @@ def get_graphico(title,series,x_0=0,y_0=0,divsize=20):
 
 if __name__ == "__main__":
     import math
+    
     f = lambda i: i * 0.1
-    g = lambda x: (x,x**2+x+1)
-    h = lambda x: (x,math.tan(x))
+    g = lambda x: (x,x**2)
+    h = lambda x: (x,math.sin(x))
+    j = lambda x: (x,math.cos(x))
+    k = lambda x: (x,math.tan(x))
     
-    serie1 = GraphicSerie([g(f(i)) for i in range(-100,100)],1,1,'s','f(x)= x² + x + 1','#000075')
-    serie2 = GraphicSerie([h(f(i)) for i in range(-100,100)],0.1,0.1,'s','g(x)= tan(x)','#A52A2A')
+    serie1 = GraphicSerie([g(f(i)) for i in range(-100,100)],1,1,'s','f(x)= x²','#000075')
+    serie2 = GraphicSerie([h(f(i)) for i in range(-1000,1000)],1,1,'s','f(x)= sen(x)','#A52A2A')
+    serie3 = GraphicSerie([j(f(i)) for i in range(-1000,1000)],1,1,'s','f(x)= cos(x)','#008000')
     
-    get_graphico('Math Graphic',[serie1,serie2],divsize=20)
+    get_graphico('Math Graphic',[serie1,serie2,serie3],divsize=20)
     
         
